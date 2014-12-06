@@ -2,24 +2,25 @@
 <meta charset="utf-8">
 <style>
 
-.country {
+.state {
   fill: #b8b8b8;
   stroke: #fff;
   stroke-width: .5px;
   stroke-linejoin: round;
 }
 
-.graticule {
-  fill: none;
-  stroke: #000;
-  stroke-opacity: .3;
-  stroke-width: .5px;
+.flu {
+	fill: orange;
 }
 
-.graticule-outline {
-  fill: none;
-  stroke: #333;
-  stroke-width: 1.5px;
+button {
+	color: white;
+	background-color: red;
+	top: 50%;
+	left: 50%;
+	border-radius: 10px;
+	z-index: 10000;
+
 }
 
 text {
@@ -33,87 +34,62 @@ text {
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
-<script>
+<script src="//use.typekit.net/uzl8dss.js"></script>
+<script>try{Typekit.load();}catch(e){}</script>   
+<script type="text/javascript">
 
-var width = 960,
-    height = 500;
+			//Width and height
+			var w = 1000;
+			var h = 1000;
 
-var sf = [-78.1764583, 41.3553519],
-    ny = [-74.0064, 40.7142];
+			var projection = d3.geo.albersUsa()
+                       .translate([w/2, h/2]);
+			//Define default path generator
+			var path = d3.geo.path()
+                 .projection(projection);
 
-var scale,
-    translate,
-    visibleArea, // minimum area threshold for points inside viewport
-    invisibleArea; // minimum area threshold for points outside viewport
+			//Create SVG element
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
 
-var simplify = d3.geo.transform({
-  point: function(x, y, z) {
-    if (z < visibleArea) return;
-    x = x * scale + translate[0];
-    y = y * scale + translate[1];
-    if (x >= -10 && x <= width + 10 && y >= -10 && y <= height + 10 || z >= invisibleArea) this.stream.point(x, y);
-  }
-});
+			//Load in GeoJSON data
+			d3.json("data/us-statesLATLON.json", function(json) {
+				
+				//Bind data and create one path per GeoJSON feature
+				svg.selectAll("path")
+				   .data(json.features)
+				   .enter().append("path")
+				   .attr("class", "state")
+				   .attr("d", path)
+    			   .attr("class", "state")
+    			   .style("fill", function(d){
+						var NAME = d.properties.NAME;
+						if (NAME == "New York") {
+							return "orange";
+    					}else if (NAME == "West Virginia") 
+    						{return "orange";
+    					
+    					}else if (NAME == "West Virginia") 
+    						{return "orange";
+    					
+    					}else if (NAME == "Ohio") 
+    						{return "orange";
+    					
+    					}else if (NAME == "Pennsylvania") 
+    						{return "orange";
+    					
+    					}else if (NAME == "New Jersey") 
+    						{return "orange";
+    					}else {
+    						return "#ccc";
+    					}
+						});
+    			   
 
-var zoom = d3.behavior.zoom()
-    .size([width, height])
-    .on("zoom", zoomed);
-
-// This projection is baked into the TopoJSON file,
-// but is used here to compute the desired zoom translate.
-var projection = d3.geo.mercator()
-    .translate([0, 0])
-    .scale(4000);
-
-var canvas = d3.select("body").append("canvas")
-    .attr("width", width)
-    .attr("height", height);
-
-var context = canvas.node().getContext("2d");
-
-var path = d3.geo.path()
-    .projection(simplify)
-    .context(context);
-
-d3.json("data/us-states.json", function(error, json) {
-  canvas
-      .datum(topojson.mesh(topojson.presimplify(json)))
-      .call(zoomTo(sf, 1).event)
-    .transition()
-      .duration(160 * 1000 / 89 * 2)
-      .each(jump);
-});
-
-function zoomTo(location, scale) {
-  var point = projection(location);
-  return zoom
-      .translate([width / 2 - point[0] * scale, height / 2 - point[1] * scale])
-      .scale(scale);
-}
-
-function zoomed(d) {
-  translate = zoom.translate();
-  scale = zoom.scale();
-  visibleArea = 1 / scale / scale;
-  invisibleArea = 200 * visibleArea;
-  context.clearRect(0, 0, width, height);
-  context.beginPath();
-  path(d);
-  context.stroke();
-}
-
-function jump() {
-  var t = d3.select(this);
-  (function repeat() {
-    t = t.transition()
-        .call(zoomTo(ny, 30).event)
-         .transition()
-        .call(zoomTo(ny, 98).event)
-      .transition()
-        .call(zoomTo(sf, 1).event)
-       
-        .each("end", repeat);
-  })();
-}
-
-</script>
+    });
+		
+		</script>
+		<button id = "One">BLUE</button>
+           </body>
