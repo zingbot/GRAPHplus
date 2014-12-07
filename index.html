@@ -45,7 +45,10 @@ text {
 			var sf = [-78.1764583, 41.3553519],
     ny = [-74.0064, 40.7142];
     li = [-74.0443671, 40.6890735];
-
+var scale,
+    translate,
+    visibleArea, // minimum area threshold for points inside viewport
+    invisibleArea; // minimum area threshold for points outside viewport
 
 			var projection = d3.geo.albersUsa()
                        .translate([w/2, h/2]);
