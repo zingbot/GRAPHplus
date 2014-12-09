@@ -39,32 +39,38 @@ text {
 <script type="text/javascript">
 
 			//Width and height
-			var w = 1000;
-			var h = 1000;
+			var width = 1000;
+			var height = 500;
 
 			var sf = [-78.1764583, 41.3553519],
-    ny = [-74.0064, 40.7142];
-    li = [-74.0443671, 40.6890735];
-var scale,
-    translate,
-    visibleArea, // minimum area threshold for points inside viewport
-    invisibleArea; // minimum area threshold for points outside viewport
+    			ny = [-74.0064, 40.7142];
+    			li = [-74.0443671, 40.6890735];
+
+			var scale, translate,
+   					visibleArea, // minimum area threshold for points inside viewport
+    				invisibleArea; // minimum area threshold for points outside viewport
+
+    		var zoom = d3.behavior.zoom()
+    			.size([width, height])
+    			.on("zoom", zoomed);
 
 			var projection = d3.geo.albersUsa()
-                       .translate([w/2, h/2]);
-			//Define default path generator
-			var path = d3.geo.path()
-                 .projection(projection);
+                 .translate([width/2, height/2]);
 
 			//Create SVG element
 			var svg = d3.select("body")
-						.append("svg")
-						.attr("width", w)
-						.attr("height", h);
+				.append("svg")
+				.attr("width", width)
+				.attr("height", height)
+				.append("g");
+
+
+			//Define default path generator
+			var path = d3.geo.path()
+                .projection(projection);
 
 			//Load in GeoJSON data
-			d3.json("data/us-statesLATLON.json", function(json) {
-				
+			d3.json("data/us-statesLATLON.json", function(error, json) {
 				//Bind data and create one path per GeoJSON feature
 				svg.selectAll("path")
 				   .data(json.features)
@@ -102,35 +108,34 @@ var scale,
 
     });
 
-function zoomTo(location, scale) {
-  var point = projection(location);
-  return zoom
-      .translate([width / 2 - point[0] * scale, height / 2 - point[1] * scale])
-      .scale(scale);
-}
+			function zoomTo(location, scale) {
+  				var point = projection(location);
+  				return zoom
+      			.translate([width / 2 - point[0] * scale, height / 2 - point[1] * scale])
+      			.scale(scale);
+				}
 
-function zoomed(d) {
-  translate = zoom.translate();
-  scale = zoom.scale();
-  visibleArea = 1 / scale / scale;
-  invisibleArea = 200 * visibleArea;
-  context.clearRect(0,0,width,height);
-  context.beginPath();
-  path(d);
-  context.stroke();
-}
+			function zoomed(d) {
+  				translate = zoom.translate();
+  				scale = zoom.scale();
+  				visibleArea = 1 / scale / scale;
+  				invisibleArea = 200 * visibleArea;
+  				context.clearRect(0,0,width,height);
+  				context.beginPath();
+  				path(d);
+  				context.stroke();
+				}
 
-function jump() {
-  var t = d3.select(this);
-  (function repeat() {
-    t = t.transition()
-        .call(zoomTo(ny, 70).event)
-         .transition()
-        .call(zoomTo(li, 1000).event)
-      .transition()
-        .call(zoomTo(sf, 1).event)
-       
-        .each("end", repeat);
+			function jump() {
+  				var t = d3.select(this);
+  				(function repeat() {
+    			t = t.transition()
+        		.call(zoomTo(ny, 70).event)
+         		.transition()
+        		.call(zoomTo(li, 1000).event)
+      			.transition()
+        		.call(zoomTo(sf, 1).event)
+            	.each("end", repeat);
   })();
 }		
 		</script>

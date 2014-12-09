@@ -4,7 +4,7 @@
 
 .state {
   fill: #b8b8b8;
-  stroke: #fff;
+  stroke: #ccc;
   stroke-width: .5px;
   stroke-linejoin: round;
 }
@@ -63,26 +63,21 @@ var context = canvas.node().getContext("2d");
 
 var path = d3.geo.path()
     .projection(simplify)
-    .context(context)
+    .context(context);
 
-
+var svg = d3.select ("body"). append("svg")
+  .attr("width", width)
+  .attr("height", height);
 
 d3.json("data/us-states.json", function(error, json) {
    if(error) return console.error(error);
+ 
   canvas
       .datum(topojson.mesh(topojson.presimplify(json)))
       .call(zoomTo(sf, 1).event)
-    .transition()
+      .transition()
       .duration(160 * 1000 / 89 * 2)
-      .each(jump)
-  feature = g.selectAll("path.json")
-        .data(json.features)
-        .enter()
-        .append("path")
-        .attr("class","states") 
-        .attr("stroke-width",.25)
-        .attr("stroke","#969696")
-        .attr("fill","none")
+      .each(jump);
 });
 
 
