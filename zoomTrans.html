@@ -8,7 +8,7 @@
 }
 
 #states {
-  fill: #aff09c;
+  fill: #aaa;
 }
 
 #states .active {
@@ -24,8 +24,15 @@
   pointer-events: none;
 }
 
+button{
+  padding: 10px 20 px;
+}
+
 </style>
 <body>
+  <button id="zoom_flu">FLU</button>
+  <button id="zoom_hiv">HIV</button>
+  <button id="zoom_ebols">EBOLA</button>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
 <script>
@@ -53,20 +60,49 @@ svg.append("rect")
 
 var g = svg.append("g");
 
-d3.json("http://linepointpath.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM GRAPHstates", function(error, us) {
+d3.json("http://linepointpath.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM GRAPHstates", function(error,json) {
   g.append("g")
       .attr("id", "states")
     .selectAll("path")
-      .data(us.features)
+      .data(json.features)
     .enter().append("path")
       .attr("d", path)
+       .style("fill", function(d){
+            var NAME = d.properties.name;
+            if (NAME == "New York") {
+              return "#00aeef";
+              }else if (NAME == "West Virginia") 
+                {return "#00aeef";
+              
+              }else if (NAME == "West Virginia") 
+                {return "#00aeef";
+              
+              }else if (NAME == "Ohio") 
+                {return "#00aeef";
+              
+              }else if (NAME == "Pennsylvania") 
+                {return "#00aeef";
+              
+              }else if (NAME == "New Jersey") 
+                {return "#00aeef";
+
+              }else if (NAME == "Indiana") 
+                {return "#00aeef";
+
+              }else {
+                return "#ccc";
+              }
+
+            })
       .on("click", clicked);
 
   g.append("path")
-      .data(us.features)
+      .data(json.features)
       .attr("id", "state-borders")
       .attr("d", path);
 });
+
+
 
 function clicked(d) {
   var x, y, k;
@@ -75,7 +111,8 @@ function clicked(d) {
     var centroid = path.centroid(d);
     x = centroid[0];
     y = centroid[1];
-    k = 4;
+    //zoom
+    k = 12;
     centered = d;
   } else {
     x = width / 2;
