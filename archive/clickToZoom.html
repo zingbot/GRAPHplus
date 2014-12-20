@@ -8,7 +8,7 @@
 }
 
 #states {
-  fill: #aaa;
+  fill: #aff09c;
 }
 
 #states .active {
@@ -53,17 +53,17 @@ svg.append("rect")
 
 var g = svg.append("g");
 
-d3.json("data/us.json", function(error, us) {
+d3.json("http://linepointpath.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM GRAPHstates", function(error, us) {
   g.append("g")
       .attr("id", "states")
     .selectAll("path")
-      .data(topojson.feature(us, us.objects.states).features)
+      .data(us.features)
     .enter().append("path")
       .attr("d", path)
       .on("click", clicked);
 
   g.append("path")
-      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .data(us.features)
       .attr("id", "state-borders")
       .attr("d", path);
 });

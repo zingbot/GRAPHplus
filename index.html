@@ -1,143 +1,92 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style>
-
-.state {
-  fill: #b8b8b8;
-  stroke: #fff;
-  stroke-width: .5px;
-  stroke-linejoin: round;
-}
-
-.flu {
-	fill: orange;
-}
-
-button {
-	color: white;
-	background-color: red;
-	top: 50%;
-	left: 50%;
-	border-radius: 10px;
-	z-index: 10000;
-
-}
-
-text {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 18px;
-  font-weight: bold;
-  text-anchor: middle;
-}
-
-</style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
-<script src="//use.typekit.net/uzl8dss.js"></script>
-<script>try{Typekit.load();}catch(e){}</script>   
-<script type="text/javascript">
+<script>
 
-			//Width and height
-			var width = 1000;
-			var height = 500;
+var width = 960,
+    height = 500,
+    json; // Global Variable
 
-			var sf = [-78.1764583, 41.3553519],
-    			ny = [-74.0064, 40.7142];
-    			li = [-74.0443671, 40.6890735];
+var sf = [-122.417, 37.775],
+    ny = [-74.0064, 40.7142];
 
-			var scale, translate,
-   					visibleArea, // minimum area threshold for points inside viewport
-    				invisibleArea; // minimum area threshold for points outside viewport
+var scale,
+    translate,
+    visibleArea, // minimum area threshold for points inside viewport
+    invisibleArea; // minimum area threshold for points outside viewport
 
-    		var zoom = d3.behavior.zoom()
-    			.size([width, height])
-    			.on("zoom", zoomed);
+var simplify = d3.geo.transform({
+  point: function(x, y, z) {
+    if (z < visibleArea) return;
+    x = x * scale + translate[0];
+    y = y * scale + translate[1];
+    if (x >= -10 && x <= width + 10 && y >= -10 && y <= height + 10 || z >= invisibleArea) this.stream.point(x, y);
+  }
+});
 
-			var projection = d3.geo.albersUsa()
-                 .translate([width/2, height/2]);
-
-			//Create SVG element
-			var svg = d3.select("body")
-				.append("svg")
-				.attr("width", width)
-				.attr("height", height)
-				.append("g");
+var zoom = d3.behavior.zoom()
+    .size([width, height])
+    .on("zoom", zoomed);
 
 
-			//Define default path generator
-			var path = d3.geo.path()
-                .projection(projection);
+// This projection is baked into the TopoJSON file,
+// but is used here to compute the desired zoom translate.
+var projection = d3.geo.mercator()
+    .translate([0, 0])
+    .scale(4000);
 
-			//Load in GeoJSON data
-			d3.json("data/us-statesLATLON.json", function(error, json) {
-				//Bind data and create one path per GeoJSON feature
-				svg.selectAll("path")
-				   .data(json.features)
-				   .enter().append("path")
-				   .attr("class", "state")
-				   .attr("d", path)
-    			   .attr("class", "state")
-    			   .style("fill", function(d){
-						var NAME = d.properties.NAME;
-						if (NAME == "New York") {
-							return "orange";
-    					}else if (NAME == "West Virginia") 
-    						{return "orange";
-    					
-    					}else if (NAME == "West Virginia") 
-    						{return "orange";
-    					
-    					}else if (NAME == "Ohio") 
-    						{return "orange";
-    					
-    					}else if (NAME == "Pennsylvania") 
-    						{return "orange";
-    					
-    					}else if (NAME == "New Jersey") 
-    						{return "orange";
+var canvas = d3.select("body").append("canvas")
+    .attr("width", width)
+    .attr("height", height);
 
-    					}else if (NAME == "Indiana") 
-    						{return "orange";
+var context = canvas.node().getContext("2d");
 
-    					}else {
-    						return "#ccc";
-    					}
-						});
+var path = d3.geo.path()
+    .projection(simplify)
+    .context(context);
 
+d3.json("http://linepointpath.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM GRAPHstates", function(error, json) {
+  canvas
+  svg.selectAll("path")
+      .data(json.features)
+      .enter().append("path")
+      .attr("class", "state")
+           .attr("d", path)
+      .call(zoomTo(sf, 4).event)
+    .transition()
+      .duration(60 * 1000 / 89 * 2)
+      .each(jump);
+});
 
-    });
+function zoomTo(location, scale) {
+  var point = projection(location);
+  return zoom
+      .translate([width / 2 - point[0] * scale, height / 2 - point[1] * scale])
+      .scale(scale);
+}
 
-			function zoomTo(location, scale) {
-  				var point = projection(location);
-  				return zoom
-      			.translate([width / 2 - point[0] * scale, height / 2 - point[1] * scale])
-      			.scale(scale);
-				}
+function zoomed(d) {
+  translate = zoom.translate();
+  scale = zoom.scale();
+  visibleArea = 1 / scale / scale;
+  invisibleArea = 200 * visibleArea;
+  context.clearRect(0, 0, width, height);
+  context.beginPath();
+  path(d);
+  context.stroke();
+}
 
-			function zoomed(d) {
-  				translate = zoom.translate();
-  				scale = zoom.scale();
-  				visibleArea = 1 / scale / scale;
-  				invisibleArea = 200 * visibleArea;
-  				context.clearRect(0,0,width,height);
-  				context.beginPath();
-  				path(d);
-  				context.stroke();
-				}
-
-			function jump() {
-  				var t = d3.select(this);
-  				(function repeat() {
-    			t = t.transition()
-        		.call(zoomTo(ny, 70).event)
-         		.transition()
-        		.call(zoomTo(li, 1000).event)
-      			.transition()
-        		.call(zoomTo(sf, 1).event)
-            	.each("end", repeat);
+function jump() {
+  var t = d3.select(this);
+  (function repeat() {
+    t = t.transition()
+        .call(zoomTo(ny, 6).event)
+      .transition()
+        .call(zoomTo(sf, 4).event)
+        .each("end", repeat);
   })();
-}		
-		</script>
-		<button id = "One">BLUE</button>
-           </body>
+}
+
+</script>
