@@ -5,18 +5,8 @@
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
-<style type="text/css">
-canvas{
- color: 'blue';
-
-}
-    path.state {
-      color: 'red';
-    }
-    </style>
-</head>
+</html>
 <body>
-
 <script type="text/javascript">
 
 var width = 960,
@@ -31,19 +21,31 @@ var scale,
     visibleArea, // minimum area threshold for points inside viewport
     invisibleArea; // minimum area threshold for points outside viewport
 
+var simplify = d3.geo.transform({
+  point: function(x, y, z) {
+    if (z < visibleArea) return;
+    x = x * scale + translate[0];
+    y = y * scale + translate[1];
+    if (x >= -10 && x <= width + 10 && y >= -10 && y <= height + 10 || z >= invisibleArea) this.stream.point(x, y);
+  }
+});
+
 var zoom = d3.behavior.zoom()
     .size([width, height])
     .on("zoom", zoomed);
 
+
+// This projection is baked into the TopoJSON file,
+// but is used here to compute the desired zoom translate.
 var projection = d3.geo.mercator()
-    .translate([width/2, height/2])
-    .scale(500);
+    .translate([0, 0])
+    .scale(4000);
 
- var canvas = d3.select("body").append("canvas")
+var canvas = d3.select("body").append("canvas")
     .attr("width", width)
-  .attr("height", height);
+    .attr("height", height);
 
-var svg = d3.select("body")
+    var svg = d3.select("body")
             .append("svg")
             .attr("width", width)
             .attr("height", height);
@@ -54,12 +56,11 @@ var path = d3.geo.path()
     .projection(simplify)
     .context(context);
 
+
+
 d3.json("http://linepointpath.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM GRAPHstates", function(error, json) {
-  console.log(json)
   canvas
   svg.selectAll("path")
-    console.log(json)
-
       .data(json.features)
       .enter().append("path")
       .attr("class", "state")
@@ -68,15 +69,6 @@ d3.json("http://linepointpath.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * F
     .transition()
       .duration(60 * 1000 / 89 * 2)
       .each(jump);
-});
-
-var simplify = d3.geo.transform({
-  point: function(x, y, z) {
-    if (z < visibleArea) return;
-    x = x * scale + translate[0];
-    y = y * scale + translate[1];
-    if (x >= -10 && x <= width + 10 && y >= -10 && y <= height + 10 || z >= invisibleArea) this.stream.point(x, y);
-  }
 });
 
 function zoomTo(location, scale) {
@@ -109,6 +101,5 @@ function jump() {
 }
 
 </script>
-<div class = "canvas"> hello </div>
 </body>
 </html>
