@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang ="en">
+<head>
+  <meta charset="utf-8">
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<style type="text/css">
+
+    path.state {
+      color: 'red';
+    }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var width = 960,
+    height = 500,
+    stateMap; // Global Variable
+
+var sf = [-122.417, 37.775],
+    ny = [-74.0064, 40.7142],
+    globalData;
+
+var scale,
+    translate,
+    visibleArea, // minimum area threshold for points inside viewport
+    invisibleArea; // minimum area threshold for points outside viewport
+
+var zoom = d3.behavior.zoom()
+    .size([width, height])
+    .on("zoom", zoomed);
+
+var projection = d3.geo.mercator()
+    .translate([width/2, height/2])
+    .scale(500);
+
+ var canvas = d3.select("body").append("canvas")
+    .attr("width", width)
+    .attr("height", height);
+
+var svg = d3.select("canvas")
+            .attr("width", width)
+            .attr("height", height);
+
+var context = canvas.node().getContext("2d");
+
+var simplify = d3.geo.transform({
+  point: function(x, y, z) {
+    if (z < visibleArea) return;
+    x = x * scale + translate[0];
+    y = y * scale + translate[1];
+    if (x >= -10 && x <= width + 10 && y >= -10 && y <= height + 10 || z >= invisibleArea) this.stream.point(x, y);
+  }
+});
+
+var path = d3.geo.path()
+  //if I take out simplify the data stops.
+    .projection(simplify)
+    .context(context);
+
+
+mapData = d3.json("http://linepointpath.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM GRAPHstates", function(error, stateMap) {
+  globalData = stateMap;
+  canvas
+      .selectAll("path")
+      .data(stateMap.features)
+      .enter()
+      // .append("path")
+      // .attr("class", "state")
+      // .attr("d", path)
+      .call(zoomTo(sf, 4).event)
+      .transition()
+      .duration(60 * 1000 / 89 * 2)
+      .each(jump);
+});
+
+
+function zoomTo(location, scale) {
+  var point = projection(location);
+  return zoom
+      .translate([width / 2 - point[0] * scale, height / 2 - point[1] * scale])
+      .scale(scale);
+}
+
+function zoomed(d) {
+  translate = zoom.translate();
+  scale = zoom.scale();
+  visibleArea = 1 / scale / scale;
+  invisibleArea = 200 * visibleArea;
+  context.clearRect(0, 0, width, height);
+  context.beginPath();
+  path(d);
+  context.stroke();
+}
+
+function jump() {
+  var t = d3.select(this);
+  (function repeat() {
+    t = t.transition()
+        .call(zoomTo(ny, 6).event)
+      .transition()
+        .call(zoomTo(sf, 4).event)
+        .each("end", repeat);
+  })();
+}
+
+</script>
+</body>
+</html>
