@@ -71,7 +71,6 @@ var svg = d3.select ("body"). append("svg")
 
 d3.json("data/us-states.json", function(error, json) {
    if(error) return console.error(error);
- 
   canvas
       .datum(topojson.mesh(topojson.presimplify(json)))
       .call(zoomTo(sf, 1).event)
