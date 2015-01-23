@@ -1,119 +1,322 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<style>
+<!doctype><html><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Odyssey.js Slides</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-.country {
-  fill: #b8b8b8;
-  stroke: #fff;
-  stroke-width: .5px;
-  stroke-linejoin: round;
-}
+  <link rel="icon" type="image/x-icon" href="http://cartodb.github.io/odyssey.js/sandbox/favicon.png">
+  <link rel="icon" type="image/png" href="http://cartodb.github.io/odyssey.js/sandbox/favicon.png">
 
-.graticule {
-  fill: none;
-  stroke: #000;
-  stroke-opacity: .3;
-  stroke-width: .5px;
-}
-
-.graticule-outline {
-  fill: none;
-  stroke: #333;
-  stroke-width: 1.5px;
-}
-
-text {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 18px;
-  font-weight: bold;
-  text-anchor: middle;
-}
-
-</style>
+  <link rel="stylesheet" href="css/cartodb.css">
+  <link rel="stylesheet" href="css/slides.css">
+  <script src="http://cartodb.github.io/odyssey.js/vendor/modernizr-2.6.2.min.js"></script>
+</head>
 <body>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://d3js.org/topojson.v1.min.js"></script>
-<script>
+  <div id="map" style="width: 100%; height: 100%;"></div>
 
-var width = 960,
-    height = 500;
+  <div id="slides_container" style="display:block;">
+    <div id="dots"></div>
 
-var sf = [-78.1764583, 41.3553519],
-    ny = [-74.0064, 40.7142];
+    <div id="slides"></div>
 
-var scale,
-    translate,
-    visibleArea, // minimum area threshold for points inside viewport
-    invisibleArea; // minimum area threshold for points outside viewport
+    <ul id="navButtons">
+      <li><a class="prev"></a></li>
+      <li><a class="next"></a></li>
+    </ul>
+  </div>
 
-var simplify = d3.geo.transform({
-  point: function(x, y, z) {
-    if (z < visibleArea) return;
-    x = x * scale + translate[0];
-    y = y * scale + translate[1];
-    if (x >= -10 && x <= width + 10 && y >= -10 && y <= height + 10 || z >= invisibleArea) this.stream.point(x, y);
-  }
-});
+  <div id="credits">
+    <span class="title" id="title">Title</span>
+    <span class="author"><strong id="author">By Name using</strong> <a href="http://cartodb.github.io/odyssey.js/">Odyssey.js</a><span>
+  </span></span></div>
 
-var zoom = d3.behavior.zoom()
-    .size([width, height])
-    .on("zoom", zoomed);
+  <script src="http://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/cartodb.js"></script>
+  <script src="http://cartodb.github.io/odyssey.js/dist/odyssey.js" charset="UTF-8"></script>
 
-// This projection is baked into the TopoJSON file,
-// but is used here to compute the desired zoom translate.
-var projection = d3.geo.mercator()
-    .translate([0, 0])
-    .scale(4000);
+  <script>
+    var resizePID;
 
-var canvas = d3.select("body").append("canvas")
-    .attr("width", width)
-    .attr("height", height);
+    function clearResize() {
+      clearTimeout(resizePID);
+      resizePID = setTimeout(function() { adjustSlides(); }, 100);
+    }
 
-var context = canvas.node().getContext("2d");
+    if (!window.addEventListener) {
+      window.attachEvent("resize", function load(event) {
+        clearResize();
+      });
+    } else {
+      window.addEventListener("resize", function load(event) {
+        clearResize();
+      });
+    }
 
-var path = d3.geo.path()
-    .projection(simplify)
-    .context(context);
+    function adjustSlides() {
+      var container = document.getElementById("slides_container"),
+          slide = document.querySelectorAll('.selected_slide')[0];
 
-d3.json("data/us-states.json", function(error, json) {
-  canvas
-      .datum(topojson.mesh(topojson.presimplify(json)))
-      .call(zoomTo(sf, 1).event)
-    .transition()
-      .duration(160 * 1000 / 89 * 2)
-      .each(jump);
-});
+      if (slide) {
+        if (slide.offsetHeight+169+40+80 >= window.innerHeight) {
+          container.style.bottom = "80px";
 
-function zoomTo(location, scale) {
-  var point = projection(location);
-  return zoom
-      .translate([width / 2 - point[0] * scale, height / 2 - point[1] * scale])
-      .scale(scale);
-}
+          var h = container.offsetHeight;
 
-function zoomed(d) {
-  translate = zoom.translate();
-  scale = zoom.scale();
-  visibleArea = 1 / scale / scale;
-  invisibleArea = 200 * visibleArea;
-  context.clearRect(0, 0, width, height);
-  context.beginPath();
-  path(d);
-  context.stroke();
-}
+          slide.style.height = h-169+"px";
+          slide.classList.add("scrolled");
+        } else {
+          container.style.bottom = "auto";
+          container.style.minHeight = "0";
 
-function jump() {
-  var t = d3.select(this);
-  (function repeat() {
-    t = t.transition()
-        .call(zoomTo(ny, 30).event)
-         .transition()
-        .call(zoomTo(ny, 98).event)
-      .transition()
-        .call(zoomTo(sf, 1).event)
-       
-        .each("end", repeat);
-  })();
-}
+          slide.style.height = "auto";
+          slide.classList.remove("scrolled");
+        }
+      }
+    }
 
-</script>
+    var resizeAction = O.Action(function() {
+      function imageLoaded() {
+        counter--;
+
+        if (counter === 0) {
+          adjustSlides();
+        }
+      }
+      var images = $('img');
+      var counter = images.length;
+
+      images.each(function() {
+        if (this.complete) {
+          imageLoaded.call( this );
+        } else {
+          $(this).one('load', imageLoaded);
+        }
+      });
+    });
+
+    function click(el) {
+      var element = O.Core.getElement(el);
+      var t = O.Trigger();
+
+      // TODO: clean properly
+      function click() {
+        t.trigger();
+      }
+
+      if (element) element.onclick = click;
+
+      return t;
+    }
+
+    O.Template({
+      init: function() {
+        var seq = O.Triggers.Sequential();
+
+        var baseurl = this.baseurl = 'http://{s}.api.cartocdn.com/base-light/{z}/{x}/{y}.png';
+        var map = this.map = L.map('map').setView([0, 0.0], 4);
+        var basemap = this.basemap = L.tileLayer(baseurl, {
+          attribution: 'data OSM - map CartoDB'
+        }).addTo(map);
+
+        // enanle keys to move
+        O.Keys().on('map').left().then(seq.prev, seq)
+        O.Keys().on('map').right().then(seq.next, seq)
+
+        click(document.querySelectorAll('.next')).then(seq.next, seq)
+        click(document.querySelectorAll('.prev')).then(seq.prev, seq)
+
+        var slides = O.Actions.Slides('slides');
+        var story = O.Story()
+
+        this.story = story;
+        this.seq = seq;
+        this.slides = slides;
+        this.progress = O.UI.DotProgress('dots').count(0);
+      },
+
+      update: function(actions) {
+        var self = this;
+
+        if (!actions.length) return;
+
+        this.story.clear();
+
+        if (this.baseurl && (this.baseurl !== actions.global.baseurl)) {
+          this.baseurl = actions.global.baseurl || 'http://a.tiles.mapbox.com/v3/zingbot.d2094e7e/{z}/{x}/{y}.png';
+
+          this.basemap.setUrl(this.baseurl);
+        }
+
+        if (this.cartoDBLayer && ("http://"+self.cartoDBLayer.options.user_name+".cartodb.com/api/v2/viz/"+self.cartoDBLayer.options.layer_definition.stat_tag+"/viz.json" !== actions.global.vizjson)) {
+          this.map.removeLayer(this.cartoDBLayer);
+
+          this.cartoDBLayer = null;
+          this.created = false;
+        }
+
+        if (actions.global.vizjson && !this.cartoDBLayer) {
+          if (!this.created) { // sendCode debounce < vis loader
+            cdb.vis.Loader.get(actions.global.vizjson, function(vizjson) {
+              self.map.fitBounds(vizjson.bounds);
+
+              cartodb.createLayer(self.map, vizjson)
+                .done(function(layer) {
+                  self.cartoDBLayer = layer;
+
+                  var sublayer = layer.getSubLayer(0),
+                      layer_name = layer.layers[0].options.layer_name,
+                      filter = actions.global.cartodb_filter ? " WHERE "+actions.global.cartodb_filter : "";
+
+                  sublayer.setSQL("SELECT * FROM "+layer_name+filter)
+
+                  self.map.addLayer(layer);
+
+                  self._resetActions(actions);
+                }).on('error', function(err) {
+                  console.log("some error occurred: " + err);
+                });
+            });
+
+            this.created = true;
+          }
+
+          return;
+        }
+
+        this._resetActions(actions);
+      },
+
+      _resetActions: function(actions) {
+        // update footer title and author
+        var title_ = actions.global.title === undefined ? '' : actions.global.title,
+            author_ = actions.global.author === undefined ? 'Using' : 'By '+actions.global.author+' using';
+
+        document.getElementById('title').innerHTML = title_;
+        document.getElementById('author').innerHTML = author_;
+        document.title = title_ + " | " + author_ +' Odyssey.js';
+
+        var sl = actions;
+
+        document.getElementById('slides').innerHTML = ''
+        this.progress.count(sl.length);
+
+        // create new story
+        for(var i = 0; i < sl.length; ++i) {
+          var slide = sl[i];
+          var tmpl = "<div class='slide' style='diplay:none'>";
+
+          tmpl += slide.html();
+          tmpl += "</div>";
+          document.getElementById('slides').innerHTML += tmpl;
+
+          this.progress.step(i).then(this.seq.step(i), this.seq)
+
+          var actions = O.Parallel(
+            this.slides.activate(i),
+            slide(this),
+            this.progress.activate(i),
+            resizeAction
+          );
+
+          actions.on("finish.app", function() {
+            adjustSlides();
+          });
+
+          this.story.addState(
+            this.seq.step(i),
+            actions
+          )
+        }
+
+        this.story.go(this.seq.current());
+      },
+
+      changeSlide: function(n) {
+        this.seq.current(n);
+      }
+    });
+  </script>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-20934186-21', 'cartodb.github.io');
+    ga('send', 'pageview');
+  </script>
+
+  <script type="text/javascript" src="http://fast.fonts.net/jsapi/3af16084-ba56-49ca-b37d-0b49b59e1927.js"></script>
+
+<script id="md_template" type="text/template">```
+-title: "The Mexican Paradox"
+-author: "GRAPH+"
+-vizjson: "http://zingbot.cartodb.com/api/v2/viz/3b372a6c-a1a6-11e4-b562-0e9d821ea90d/viz.json"
+-baseurl: "http://a.tiles.mapbox.com/v3/zingbot.d2094e7e/{z}/{x}/{y}.png"
+```
+
+#The Mexican Paradox
+```
+- center: [26.72, -106.66]
+- zoom: 4
+```
+
+The Mexican Paradox is a phenomenon that can be seen by comparing health outcomes among different groups in the population. This study looks at women who gave birth in Michigan between 1989 and 2006 and compares non-Hispanic whites, US born Mexicans and foreign born Mexicans.
+
+#Births in Michigan, 1989-2006
+```
+- center: [44.48, -84.81]
+- zoom: 5
+```
+The study found that foreign born Mexicans in the US have lower rates of infant mortality than non-Hispanic whites. This means that Mexican mothers in the US, particularly those born in Mexico, have fewer babies die than non-Hispanic mothers.
+![Mexican Paradox Graph](img/mexParaChart.png)
+
+#Against Intuition
+```
+- center: [26.72, -106.66]
+- zoom: 6
+L.marker([26.72, -103.66]).actions.addRemove(S.map)
+L.marker([29.72, -103.66]).actions.addRemove(S.map)
+L.popup(className = "popInfo").setLatLng([27.72, -103.66]).setContent("I am a popup.").actions.openOn(S.map)
+```
+
+(Add highlighted graph)
+
+This is surprising because Hispanic groups in the US usually have higher poverty, lower income and less education than non-Hispanic whites and these factors often cause worse health outcomes. But here they don’t.
+
+There are 2 principal explanations for why this might be.
+
+
+#Explanation 1: Cultural Norms
+```
+- center: [26.72, -106.66]
+- zoom: 5```
+
+(Images not so embedded in the sidebar)
+
+The first possibility is different social and cultural norms among Mexicans relative to non-Hispanic whites. These include the norm of spending more time together, and feeling obligated among family and friends to do so, meaning that people are more likely to offer help before it is asked for. Additionally, things like diet, exercise and childcare norms may neutralize the negative effects of poverty. This theory is supported by the observation that the paradox is stronger in immigrants who are more likely to adhere to these norms and who have spent a shorter time in the US.
+
+
+![New York](http://www.boston-discovery-guide.com/image-files/new-york-1.jpg)
+
+#Explanation 2: Healthier Immigrants
+```
+- center: [26.72, -106.66]
+- zoom: 5
+```
+
+The second explanation is that the difference is the result of the people who choose to immigrate to and stay in the US, that these people are simply healthier. It is supported by data showing that other ethnic groups who are not Hispanic also seem to benefit from the Mexican Paradox.
+
+
+#Looking at Trends
+
+Typically the Mexican Paradox has been studied looking at single points in time. This study looks at the trend over two decades between 1989-2006. It found that the Mexican Paradox was clearly present between 1989-1991. But then there was an upward trend in infant mortality for babies born to foreign born Mexican mothers so in the later periods, Mexican mothers no longer had an advantage.
+
+
+#Theories
+
+The authors speculate that changing sociocultural norms among Mexican mothers or changes in the health of those immigrating  may explain these observations.
+
+Cheers!
+</script></body></html>
