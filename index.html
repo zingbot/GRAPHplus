@@ -112,8 +112,9 @@
       init: function() {
         var seq = O.Triggers.Sequential();
 
-        var baseurl = this.baseurl = 'http://{s}.api.cartocdn.com/base-light/{z}/{x}/{y}.png';
-        var map = this.map = L.map('map').setView([0, 0.0], 4);
+        var baseurl = this.baseurl = 'http://a.tiles.mapbox.com/v3/zingbot.d2094e7e/{z}/{x}/{y}.png';
+
+        var map = this.map = L.map('map').setView([26.72, -106.66], 5);
         var basemap = this.basemap = L.tileLayer(baseurl, {
           attribution: 'data OSM - map CartoDB'
         }).addTo(map);
@@ -259,7 +260,7 @@
 #The Mexican Paradox
 ```
 - center: [26.72, -106.66]
-- zoom: 4
+- zoom: 5
 ```
 
 The Mexican Paradox is a phenomenon that can be seen by comparing health outcomes among different groups in the population. This study looks at women who gave birth in Michigan between 1989 and 2006 and compares non-Hispanic whites, US born Mexicans and foreign born Mexicans.
@@ -278,7 +279,7 @@ The study found that foreign born Mexicans in the US have lower rates of infant 
 - zoom: 6
 L.marker([26.72, -103.66]).actions.addRemove(S.map)
 L.marker([29.72, -103.66]).actions.addRemove(S.map)
-L.popup(className = "popInfo").setLatLng([27.72, -103.66]).setContent("I am a popup.").actions.openOn(S.map)
+//L.popup(className = "popInfo").setLatLng([27.72, -103.66]).setContent("I am a popup.").actions.addRemove(S.map)
 ```
 
 (Add highlighted graph)

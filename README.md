@@ -1,4 +1,4 @@
 GRAPHplus
 
-Projects associated wit the Columbia GRAPH+ inforamtion visual exploration and process
+Projects associated with the Columbia GRAPH+ inforamtion visual exploration and process
 =========
