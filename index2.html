@@ -40,9 +40,9 @@
   <script>
     O.Template({
       init: function() {
-        var baseurl = this.baseurl = 'http://{s}.api.cartocdn.com/base-light/{z}/{x}/{y}.png';
+        var baseurl = this.baseurl = 'http://a.tiles.mapbox.com/v3/zingbot.d2094e7e/{z}/{x}/{y}.png';
         var map = this.map = L.map('map',{
-          center: [0, 0],
+          center: [26.72, -106.66],
           zoom: 4
         });
 
@@ -183,57 +183,72 @@
 
 
 <script id="md_template" type="text/template">```
--title: "Odyssey example FTW"
--author: "CartoDB"
+-title: "The Mexican Paradox"
+-author: "GRAPH+"
+-vizjson: "http://zingbot.cartodb.com/api/v2/viz/3b372a6c-a1a6-11e4-b562-0e9d821ea90d/viz.json"
+-baseurl: "http://a.tiles.mapbox.com/v3/zingbot.d2094e7e/{z}/{x}/{y}.png"
 ```
 
-#Your first odyssey.js story
+#The Mexican Paradox
 ```
-- center: [37.7620, -122.4385]
-- zoom: 9
-L.marker([37.7620, -122.4385]).actions.addRemove(S.map)
-```
-
-Move the map around and save the position by clicking on "ADD > Move map to the current position". As you can see, now we are highlighting San Francisco.
-
-Then add here the description for your slide so it's shown on the left side box.
-
-
-#How to add more states
-```
-- center: [40.7348, -73.9970]
-- zoom: 9
-L.marker([40.7348, -73.9970]).actions.addRemove(S.map)
+- center: [26.72, -106.66]
+- zoom: 5
 ```
 
-By adding new [Markdown] (http://daringfireball.net/projects/markdown/]) h1 elements (#) you add new states to your story.
+The Mexican Paradox is a phenomenon that can be seen by comparing health outcomes among different groups in the population. This study looks at women who gave birth in Michigan between 1989 and 2006 and compares non-Hispanic whites, US born Mexicans and foreign born Mexicans.
 
-
-#Adding images to your story
+#Births in Michigan, 1989-2006
 ```
-- center: [40.7365, -73.9982]
-- zoom: 13
+- center: [44.48, -84.81]
+- zoom: 5
+```
+The study found that foreign born Mexicans in the US have lower rates of infant mortality than non-Hispanic whites. This means that Mexican mothers in the US, particularly those born in Mexico, have fewer babies die than non-Hispanic mothers.
+![Mexican Paradox Graph](img/mexParaChart.png)
+
+#Against Intuition
+```
+- center: [26.72, -106.66]
+- zoom: 6
+L.marker([26.72, -103.66]).actions.addRemove(S.map)
+L.marker([29.72, -103.66]).actions.addRemove(S.map)
+//L.popup(className = "popInfo").setLatLng([27.72, -103.66]).setContent("I am a popup.").actions.addRemove(S.map)
 ```
 
-By default, images are also supported. 
+(Add highlighted graph)
+
+This is surprising because Hispanic groups in the US usually have higher poverty, lower income and less education than non-Hispanic whites and these factors often cause worse health outcomes. But here they don’t.
+
+There are 2 principal explanations for why this might be.
+
+
+#Explanation 1: Cultural Norms
+```
+- center: [26.72, -106.66]
+- zoom: 5```
+
+(Images not so embedded in the sidebar)
+
+The first possibility is different social and cultural norms among Mexicans relative to non-Hispanic whites. These include the norm of spending more time together, and feeling obligated among family and friends to do so, meaning that people are more likely to offer help before it is asked for. Additionally, things like diet, exercise and childcare norms may neutralize the negative effects of poverty. This theory is supported by the observation that the paradox is stronger in immigrants who are more likely to adhere to these norms and who have spent a shorter time in the US.
+
 
 ![New York](http://www.boston-discovery-guide.com/image-files/new-york-1.jpg)
 
-#Exporting your story
+#Explanation 2: Healthier Immigrants
 ```
-- center: [40.4469, -28.5645]
-- zoom: 3
+- center: [26.72, -106.66]
+- zoom: 5
 ```
 
-You have different options for exporting your odyssey.js visualization. You can either embed this using an iframe, publishing with a click on bl.ocks or just share the URL of this visualization.
+The second explanation is that the difference is the result of the people who choose to immigrate to and stay in the US, that these people are simply healthier. It is supported by data showing that other ethnic groups who are not Hispanic also seem to benefit from the Mexican Paradox.
 
-If you want to customize it further, you can download the generated source code by clicking on the button below.
 
-#Advanced users
+#Looking at Trends
 
-Check out our [documentation](/odyssey.js/documentation/) to learn how to use odyssey to create more custom things. It's crazy the amount of cool things that can be done with the library.
+Typically the Mexican Paradox has been studied looking at single points in time. This study looks at the trend over two decades between 1989-2006. It found that the Mexican Paradox was clearly present between 1989-1991. But then there was an upward trend in infant mortality for babies born to foreign born Mexican mothers so in the later periods, Mexican mothers no longer had an advantage.
 
-Also if you are a developer, take a look at our contributing guideline so you can push code to the actual library.
 
-Cheers!
+#Theories
+
+The authors speculate that changing sociocultural norms among Mexican mothers or changes in the health of those immigrating  may explain these observations.
+
 </script></body></html>
