@@ -183,77 +183,106 @@
 
 
 <script id="md_template" type="text/template">```
--title: "The Mexican Paradox"
+title: "Gun Deaths, State by State"
 -author: "GRAPH+"
--vizjson: "http://zingbot.cartodb.com/api/v2/viz/3b372a6c-a1a6-11e4-b562-0e9d821ea90d/viz.json"
--baseurl: "http://a.tiles.mapbox.com/v3/zingbot.d2094e7e/{z}/{x}/{y}.png"
 ```
 
-#The Mexican Paradox
+#Gun Deaths in the US 2000-2010
 ```
-- center: [32.0, -101.5]
-- zoom: 4
+- center: [39.0, -101.5]
+- zoom: 3
+L.marker([26.72, -103.66]).actions.addRemove(S.map)
 ```
 
-The Mexican Paradox is a phenomenon that can be seen by comparing health outcomes among different groups in the population. This study looks at women who gave birth in Michigan between 1989 and 2006 and compares non-Hispanic whites, US born Mexicans and foreign born Mexicans.
+Between 2000 and 2010, 335,609 people died from gun related deaths in the United States. Researchers looked at data from the Web-based Injury Statistics Query and Reporting System to identify the trends in race (Caucasian, African-American or other), ethnicity (Hispanic or non-Hispanic) and intent (homicide, suicide, undetermined or unintentional). Here is what they found.
 
-#Births in Michigan, 1989-2006
-```
-- center: [44.48, -84.81]
-- zoom: 5
-```
-The study found that foreign born Mexicans in the US have lower rates of infant mortality than non-Hispanic whites. This means that Mexican mothers in the US, particularly those born in Mexico, have fewer babies die than non-Hispanic mothers.
-![Mexican Paradox Graph](img/mexParaChart.png)
 
-#Against Intuition
+#National Average
 ```
 - center: [26.72, -106.66]
-- zoom: 4
+- zoom: 5
 L.marker([26.72, -103.66]).actions.addRemove(S.map)
-L.marker([29.72, -103.66]).actions.addRemove(S.map)
-//L.popup(className = "popInfo").setLatLng([27.72, -103.66]).setContent("I am a popup.").actions.addRemove(S.map)
 ```
 
+Nationally during this 11 year period, the risk of death by firearm was 10.21 per 100,000 people meaning approximately 10 people out of every 100,000 in the US died by a gun.
 
-This is surprising because Hispanic groups in the US usually have higher poverty, lower income and less education than non-Hispanic whites and these factors often cause worse health outcomes. But here they don’t.
-![Mexican Paradox Graph](img/mexParaChartDiff.png)
+#Lowest and Highest
+```
+- center: [26.72, -106.66]
+- zoom: 6
+L.marker([26.72, -103.66]).actions.addRemove(S.map)
+L.marker([29.72, -103.66]).actions.addRemove(S.map)
+L.popup().setLatLng([26,72, -106.66]).setContent("I am a popup.").addTo(S.map)
+```
+
+Deaths varied by state with the lowest number of deaths being 3.02 per 100,000 in Hawaii and the highest number of deaths being 18.62 per 100,000 in Louisiana. 
 
 
-There are 2 principal explanations for why this might be.
-
-
-#Explanation 1: Cultural Norms
+#States Higher than National Average
 ```
 - center: [26.72, -106.66]
 - zoom: 5```
 
-
-
-The first possibility is different social and cultural norms among Mexicans relative to non-Hispanic whites. These include the norm of spending more time together, and feeling obligated among family and friends to do so, meaning that people are more likely to offer help before it is asked for. 
-
-![Mexican Paradox Graph](img/mexParaOne.jpg)
-
-
-Additionally, things like diet, exercise and childcare norms may neutralize the negative effects of poverty. This theory is supported by the observation that the paradox is stronger in immigrants who are more likely to adhere to these norms and who have spent a shorter time in the US.
+Overall 30 states and Washington DC had rates higher than the national average.
+Oregon, Nevada, Arizona, Idaho, Wyoming, Colorado, Utah, New Mexico, Montana, Texas, Oklahoma, Kansas, Missouri, Arkansas, Louisiana, Mississippi, Alabama, Georgia, Florida, South Carolina, North Carolina, Kentucky, Tennessee, Virginia, West Virginia, Indiana, Michigan, Pennsylvania, Maryland, Alaska, Washington DC
 
 
 
-#Explanation 2: Healthier Immigrants
+#Not Much Change
 ```
 - center: [26.72, -106.66]
 - zoom: 5
 ```
 
-The second explanation is that the difference is the result of the people who choose to immigrate to and stay in the US, that these people are simply healthier. It is supported by data showing that other ethnic groups who are not Hispanic also seem to benefit from the Mexican Paradox.
+41 of the states didn’t change much from 2000-2010. 
+
+(States that DID change are Arizona, California, Illinois, Maryland, Nevada, New York, North Carolina, Florida, Massachusetts and Washington DC)
 
 
-#Looking at Trends
+# Death Rate by Race
 
-Typically the Mexican Paradox has been studied looking at single points in time. This study looks at the trend over two decades between 1989-2006. It found that the Mexican Paradox was clearly present between 1989-1991. But then there was an upward trend in infant mortality for babies born to foreign born Mexican mothers so in the later periods, Mexican mothers no longer had an advantage.
-![Mexican Paradox Graph](img/mexParaChartDip.png)
+The national average rate of death by gun for African Americans was 18.51 per 100,000 people and for Caucasians was 9.05 per 100,000. (Nationally, African Americans were almost twice more likely to die by a gun than Caucasians.)
 
-#Theories
 
-The authors speculate that changing sociocultural norms among Mexican mothers or changes in the health of those immigrating  may explain these observations.
+# Death Rate by Ethnicity
+
+The national average rate of death by gun for Hispanics was 7.13 per 100,000 people and for non-Hispanics was 10.13 per 100,000. (Nationally, non-Hispanics were more likely to die by a gun than Hispanics.)
+
+
+# States with Gun Death Increases
+
+Two states saw their rate of gun deaths increase over this 11 year period, Florida and Massachusetts. In those states, the deaths of Caucasians and Non-Hispanics were responsible for the increase.
+
+
+# States with Gun Death Decreases
+
+Seven states and Washington DC saw their rate of gun deaths decrease over this 11 year period, California, North Carolina, Arizona, Nevada, New York, Illinois, and Maryland. In those states fewer deaths of Hispanics and African-Americans drove the fall.
+
+# Homicides and Suicides Nationally
+
+Nationally the rates of firearm related deaths classified as homicides (4.1 per 100,000) and suicides (5.8 per 100,000) remained constant during this time but varied between states.
+
+# Conclusions
+
+While the rate of national firearm deaths remained stable during 2000– 2010, there was significant variation at the state level.
+
+Gun related deaths were twice as high in African-Americans than Caucasians but decreased among Hispanics.
+
+Efforts to identify state-specific best practices can contribute to changes in national firearm fatality rates that remain high. This calls for specific studies to identify the drivers of the state-specific trends followed by introducing tailored programmes that target specific racial and ethnic groups in specific states.
+
+# Strength and LImitations of this Study
+
+▪ This study uses the best available data of firearm mortality in the USA.
+
+▪ It highlights the state-specific variations in firearm fatalities including fluctuation according to race, ethnicity and intent which was previously hidden behind a national gun mortality rate that stayed stable during this 11 year period.
+
+▪ This is the first report that documents firearm fatality trends by ethnicity.
+
+▪ Understanding the drivers that result in ethnic, racial and intent trends can help states identify programs to reduce death and injury due to firearms.
+
+▪ It is possible that not all gun deaths have been reported, which impacts the results.
+
+▪ The variation in firearm mortality may be a feature of cities and counties with varying crime rates, and we do not address the variation existing at such level.
+
 
 </script></body></html>
