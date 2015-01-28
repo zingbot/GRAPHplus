@@ -70,7 +70,7 @@
         this.story.clear();
 
         if (this.baseurl && (this.baseurl !== actions.global.baseurl)) {
-          this.baseurl = actions.global.baseurl || 'http://0.api.cartocdn.com/base-light/{z}/{x}/{y}.png';
+          this.baseurl = actions.global.baseurl || 'http://a.tiles.mapbox.com/v3/zingbot.d2094e7e/{z}/{x}/{y}.png';
 
           this.basemap.setUrl(this.baseurl);
         }
@@ -185,13 +185,14 @@
 <script id="md_template" type="text/template">```
 title: "Gun Deaths, State by State"
 -author: "GRAPH+"
+-vizjson: "http://zingbot.cartodb.com/api/v2/viz/01f6bb46-a656-11e4-8c09-0e4fddd5de28/viz.json"
+-baseurl: "http://a.tiles.mapbox.com/v3/zingbot.d2094e7e/{z}/{x}/{y}.png"
 ```
 
 #Gun Deaths in the US 2000-2010
 ```
 - center: [39.0, -101.5]
-- zoom: 3
-L.marker([26.72, -103.66]).actions.addRemove(S.map)
+- zoom: 5
 ```
 
 Between 2000 and 2010, 335,609 people died from gun related deaths in the United States. Researchers looked at data from the Web-based Injury Statistics Query and Reporting System to identify the trends in race (Caucasian, African-American or other), ethnicity (Hispanic or non-Hispanic) and intent (homicide, suicide, undetermined or unintentional). Here is what they found.
