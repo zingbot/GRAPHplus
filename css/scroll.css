@@ -326,3 +326,9 @@ div#credits span.author
 	right: 40px;
 	text-align: right;
 }
+
+#keynumbers {
+/*make a text highlight here
+*/
+background: #ffb7b7;
+}
